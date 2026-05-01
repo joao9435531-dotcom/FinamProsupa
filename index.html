@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanPro · Gestão Financeira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <h1>FinanPro <i class="fa-solid fa-chart-pie" style="color:#1e293b"></i></h1>
+            <span>controle financeiro inteligente</span>
+        </div>
+
+        <div class="auth-copy">
+            <h2 id="authTitle">Entrar na conta</h2>
+            <p id="authSubtitle">Acesse seu dashboard financeiro com e-mail e senha.</p>
+        </div>
+
+        <form id="authForm" class="auth-form">
+            <div class="form-group">
+                <label for="authEmail">E-mail</label>
+                <input type="email" id="authEmail" autocomplete="email" required placeholder="seuemail@exemplo.com">
+            </div>
+
+            <div class="form-group">
+                <label for="authPassword">Senha</label>
+                <input type="password" id="authPassword" autocomplete="current-password" minlength="6" required placeholder="Mínimo de 6 caracteres">
+            </div>
+
+            <button type="submit" class="btn-save auth-submit" id="authSubmit">Entrar</button>
+            <button type="button" class="btn-link auth-toggle" id="authToggle">Criar uma conta</button>
+            <div class="auth-feedback" id="authFeedback"></div>
+        </form>
+    </div>
+</div>
+
+<div class="container app-shell hidden" id="appShell">
+    <div class="header">
+        <div class="logo">
+            <h1>FinanPro <i class="fa-solid fa-chart-pie" style="color:#1e293b"></i></h1>
+            <span>controle financeiro inteligente</span>
+        </div>
+        <div class="saldo-principal" id="saldoResumoHeader"></div>
+        <div class="user-area">
+            <span id="userEmail"></span>
+            <button class="btn-secondary" id="btnLogout" type="button"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</button>
+        <button class="tab-btn" data-tab="transacoes"><i class="fa-solid fa-list"></i> Transações</button>
+        <button class="tab-btn" data-tab="relatorios"><i class="fa-solid fa-chart-simple"></i> Relatórios</button>
+    </div>
+
+    <div id="dashboard" class="tab-pane active">
+        <div class="cards-grid" id="cardsResumo"></div>
+
+        <div class="dashboard-grid">
+            <div class="insight-box">
+                <div class="section-head">
+                    <div>
+                        <h3>Visão rápida do mês</h3>
+                        <p>Indicadores que ajudam a decidir, não só registrar.</p>
+                    </div>
+                </div>
+                <div class="insight-grid" id="insightsRapidos"></div>
+            </div>
+
+            <div class="alert-list">
+                <div class="section-head">
+                    <div>
+                        <h3>Alertas financeiros</h3>
+                        <p>Contas vencendo, orçamento pressionado e pontos de atenção.</p>
+                    </div>
+                </div>
+                <ul id="listaAlertas"></ul>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-container" id="containerChartEntradasDashboard">
+                <div class="chart-title">Entradas recebidas por categoria no mês</div>
+                <canvas id="chartEntradasCategoria"></canvas>
+            </div>
+            <div class="chart-container" id="containerChartSaidasDashboard">
+                <div class="chart-title">Saídas pagas por categoria no mês</div>
+                <canvas id="chartSaidasCategoria"></canvas>
+            </div>
+        </div>
+
+        <div class="mini-grid">
+            <div class="section-card">
+                <div class="section-head">
+                    <div>
+                        <h3>Últimas movimentações</h3>
+                        <p>Últimos lançamentos para acompanhamento rápido.</p>
+                    </div>
+                </div>
+                <div id="tabelaDashboardResumo"></div>
+            </div>
+
+            <div class="budget-card">
+                <div class="section-head">
+                    <div>
+                        <h3>Orçamento por categoria</h3>
+                        <p>Comparação entre o limite definido e o gasto do mês.</p>
+                    </div>
+                    <button class="btn-secondary" id="btnAbrirOrcamentos"><i class="fa-solid fa-sliders"></i> Ajustar</button>
+                </div>
+                <div id="orcamentosResumo"></div>
+            </div>
+        </div>
+
+
+        <div class="mini-grid">
+            <div class="section-card">
+                <div class="section-head">
+                    <div>
+                        <h3>Metas financeiras</h3>
+                        <p>Acompanhe objetivos, ritmo de aporte e previsão de conclusão.</p>
+                    </div>
+                    <button class="btn-secondary" id="btnNovaMeta"><i class="fa-solid fa-bullseye"></i> Nova meta</button>
+                </div>
+                <div id="metasResumo"></div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-head">
+                    <div>
+                        <h3>Projeção de saldo</h3>
+                        <p>Saldo futuro com base apenas no saldo já consolidado, nos lançamentos futuros salvos e nas recorrências mensais.</p>
+                    </div>
+                </div>
+                <div class="projection-controls">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="projecaoValor">Horizonte</label>
+                        <input type="number" id="projecaoValor" min="1" step="1" value="6" inputmode="numeric">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="projecaoUnidade">Unidade</label>
+                        <select id="projecaoUnidade">
+                            <option value="meses">Meses</option>
+                            <option value="anos">Anos</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="projecaoResumo"></div>
+                <div id="projecaoLinhaTempo"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="transacoes" class="tab-pane">
+        <div class="toolbar">
+            <div>
+                <h2><i class="fa-solid fa-arrow-right-arrow-left"></i> Todas as transações</h2>
+                <p style="color:#64748b; margin-top:6px;">Cadastre, filtre, exporte e acompanhe vencimentos.</p>
+            </div>
+            <div class="actions-inline">
+                <button class="btn-secondary" id="btnExportar"><i class="fa-solid fa-file-export"></i> Exportar JSON</button>
+                <button class="btn-secondary" id="btnImportar"><i class="fa-solid fa-file-import"></i> Importar JSON</button>
+                <button class="btn-secondary" id="btnCarregarDemo"><i class="fa-solid fa-wand-magic-sparkles"></i> Carregar demo</button>
+                <button class="btn-ghost" id="btnRestaurarDemo"><i class="fa-solid fa-trash-can"></i> Limpar tudo</button>
+                <button class="btn-adicionar" id="btnNovaTransacao"><i class="fa-solid fa-plus"></i> Nova transação</button>
+                <input type="file" id="inputImportar" accept="application/json" hidden>
+            </div>
+        </div>
+
+        <div class="filtros">
+            <input type="text" id="filtroDescricao" placeholder="🔍 Buscar descrição...">
+            <select id="filtroTipo">
+                <option value="todos">Todos os tipos</option>
+                <option value="entrada">Entradas</option>
+                <option value="saida">Saídas</option>
+            </select>
+            <select id="filtroStatus">
+                <option value="todos">Todos os status</option>
+                <option value="pago">Pago / Recebido</option>
+                <option value="pendente">Pendente</option>
+                <option value="atrasado">Atrasadas</option>
+            </select>
+            <select id="filtroCategoria"></select>
+            <input type="month" id="filtroMes">
+        </div>
+        <div class="filter-meta">
+            <span id="contadorResultados">0 lançamentos encontrados</span>
+            <button class="btn-link" id="btnLimparFiltros" type="button">Limpar filtros</button>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Vencimento</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                        <th>Tipo</th>
+                        <th>Status</th>
+                        <th>Recorrente</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabelaTransacoes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="relatorios" class="tab-pane">
+        <div class="cards-grid" id="cardsRelatorio"></div>
+
+        <div class="charts-row">
+            <div class="chart-container" id="containerChartEntradasRelatorio">
+                <div class="chart-title">Entradas por categoria</div>
+                <canvas id="chartRelatorioEntradas"></canvas>
+            </div>
+            <div class="chart-container" id="containerChartSaidasRelatorio">
+                <div class="chart-title">Saídas por categoria</div>
+                <canvas id="chartRelatorioSaidas"></canvas>
+            </div>
+        </div>
+
+        <div class="mini-grid">
+            <div class="section-card">
+                <div class="section-head">
+                    <div>
+                        <h3>Resumo mensal</h3>
+                        <p>Entradas, saídas, saldo e quantidade de lançamentos por mês.</p>
+                    </div>
+                </div>
+                <div id="tabelaMensal"></div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-head">
+                    <div>
+                        <h3>Próximos vencimentos</h3>
+                        <p>Contas pendentes e recebimentos previstos.</p>
+                    </div>
+                </div>
+                <div id="proximosVencimentos"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modalTransacao">
+        <div class="modal-content">
+            <h2 id="modalTitulo">Nova transação</h2>
+            <form id="formTransacao">
+                <input type="hidden" id="transacaoId">
+                <div class="form-group">
+                    <label for="descricao">Descrição *</label>
+                    <input type="text" id="descricao" required placeholder="Ex: Salário, mercado, internet...">
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="valor">Valor (R$)</label>
+                        <input type="number" id="valor" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" required>
+                            <option value="entrada">Entrada (receita)</option>
+                            <option value="saida">Saída (despesa)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="data">Data de lançamento</label>
+                        <input type="date" id="data" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vencimento">Vencimento</label>
+                        <input type="date" id="vencimento">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status">
+                            <option value="pago">Pago / Recebido</option>
+                            <option value="pendente">Pendente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observacao">Observação</label>
+                    <textarea id="observacao" placeholder="Detalhes opcionais da transação..."></textarea>
+                </div>
+
+                <label class="toggle-line">
+                    <input type="checkbox" id="recorrente">
+                    Marcar como recorrente mensal
+                </label>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="modalOrcamentos">
+        <div class="modal-content">
+            <h2>Orçamento mensal por categoria</h2>
+            <p style="color:#64748b; margin-bottom:18px; line-height:1.5;">Defina limites mensais para as categorias de saída. O dashboard compara esses valores com seus gastos do mês.</p>
+            <form id="formOrcamentos">
+                <div class="budget-grid" id="orcamentosFormGrid"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="fecharModalOrcamentos()">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar orçamentos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal" id="modalMeta">
+        <div class="modal-content">
+            <h2 id="metaModalTitulo">Nova meta</h2>
+            <form id="formMeta">
+                <input type="hidden" id="metaId">
+                <div class="form-group">
+                    <label for="metaNome">Nome da meta *</label>
+                    <input type="text" id="metaNome" required placeholder="Ex: reserva, viagem, notebook...">
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="metaAlvo">Valor alvo (R$)</label>
+                        <input type="number" id="metaAlvo" min="0.01" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="metaAtual">Quanto já guardado (R$)</label>
+                        <input type="number" id="metaAtual" min="0" step="0.01" value="0">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="metaAporte">Aporte mensal planejado</label>
+                        <input type="number" id="metaAporte" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="metaPrazo">Prazo desejado</label>
+                        <input type="date" id="metaPrazo">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="metaDescricao">Descrição</label>
+                    <textarea id="metaDescricao" placeholder="Detalhes opcionais da meta..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="fecharModalMeta()">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar meta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="footer-info">FinanPro · gestão para pessoas físicas e pequenos negócios</div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
