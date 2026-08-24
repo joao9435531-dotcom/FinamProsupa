@@ -2,7 +2,7 @@
 
 ## Membros responsáveis
 
-- João Vitor
+- João Vitor (O 01)
 - Vinícius
 - André
 
