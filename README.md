@@ -2,8 +2,8 @@
 
 ## Membros responsáveis
 
-- João Vitor (O 01)
-- Vinícius
-- André
+- João Vitor Ruas 🫪
+- Vinícius 🥶
+- André 🤔
 
 **Turma:** 3001
